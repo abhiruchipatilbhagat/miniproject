@@ -1,0 +1,45 @@
+import platform
+import psutil
+import tkinter as tk
+
+class SystemInfoApp:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("System Information")
+        
+        self.label_system = tk.Label(root, text=f"System: {platform.system()} {platform.release()}")
+        self.label_processor = tk.Label(root, text=f"Processor: {platform.processor()}")
+        
+        self.label_memory = tk.Label(root, text="Memory:")
+        self.label_memory_info = tk.Label(root, text=self.get_memory_info())
+        
+        self.label_disk = tk.Label(root, text="Disk Usage:")
+        self.label_disk_info = tk.Label(root, text=self.get_disk_info())
+
+        self.label_system.pack(pady=10)
+        self.label_processor.pack(pady=10)
+        self.label_memory.pack(pady=5)
+        self.label_memory_info.pack(pady=5)
+        self.label_disk.pack(pady=5)
+        self.label_disk_info.pack(pady=5)
+
+    def get_memory_info(self):
+        memory = psutil.virtual_memory()
+        return f"Total: {self.format_size(memory.total)}, Used: {self.format_size(memory.used)}"
+
+    def get_disk_info(self):
+        disk = psutil.disk_usage('/')
+        return f"Total: {self.format_size(disk.total)}, Used: {self.format_size(disk.used)}"
+
+    def format_size(self, size):
+        # Convert bytes to human-readable format
+        for unit in ['B', 'KB', 'MB', 'GB', 'TB']:
+            if size < 1024.0:
+                break
+            size /= 1024.0
+        return f"{size:.2f} {unit}"
+
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = SystemInfoApp(root)
+    root.mainloop()
